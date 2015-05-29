@@ -1,0 +1,4 @@
+'.source.nez':
+  'editor':
+    'commentStart': '//'
+    'increaseIndentPattern': '^[A-Z_a-z]([0-9A-Z_a-z])*$'

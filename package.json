@@ -1,0 +1,21 @@
+{
+  "name": "language-nez",
+  "main": "./lib/nez",
+  "version": "0.1.0",
+  "description": "nez support in Atom",
+  "engines": {
+    "atom": "*",
+    "node": "*"
+  },
+  "activationCommands": {
+    "atom-workspace": [
+      "nez:toggle",
+      "nez:run with start point"
+    ]
+  },
+  "dependencies": {
+    "atom-space-pen-views": "^2.0.3",
+    "child-process-promise": "^1.1.0"
+  },
+  "license": "MIT"
+}
