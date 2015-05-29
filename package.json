@@ -3,6 +3,10 @@
   "main": "./lib/nez",
   "version": "0.1.0",
   "description": "nez support in Atom",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/takerusu/language-nez"
+  },
   "engines": {
     "atom": "*",
     "node": "*"
