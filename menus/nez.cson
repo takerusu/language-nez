@@ -10,8 +10,8 @@
             'command': 'nez:toggle'
           },
           {
-            'label': 'Run with starting point'
-            'command': 'nez:run with start point'
+            'label': 'Set starting point'
+            'command': 'nez:set starting point'
           }
         ]
       }

@@ -1,0 +1,11 @@
+'.platform-darwin':
+  'ctrl-cmd-n': 'nez:toggle'
+'.platform-win32':
+  'alt-shift-N': 'nez:toggle'
+'.platform-linux':
+  'alt-shift-N': 'nez:toggle'
+
+'.nez-view input':
+  'enter': 'core:confirm'
+'.nez-view textarea':
+  'enter': 'core:confirm'
