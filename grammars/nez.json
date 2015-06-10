@@ -37,6 +37,9 @@
             "include": "#exampleBackStmt"
         },
         {
+            "include": "#exampleLine"
+        },
+        {
             "include": "#importStmt"
         },
         {
@@ -359,7 +362,7 @@
             "name": "keyword.operator.nez"
         },
         "exampleSingleStmt": {
-            "begin": "^(example[!]?)\\s*([a-zA-Z$_][a-zA-Z$_0-9]*)\\s*(''')\\s*$",
+            "begin": "^(example[!]?)\\s*([a-zA-Z$_][a-zA-Z$_0-9]*)([&]([a-zA-Z$_][a-zA-Z$_0-9]*))*\\s*(''')\\s*$",
             "beginCaptures": {
                 "1": {
                     "name": "keyword.operator.nez"
@@ -367,26 +370,30 @@
                 "2": {
                     "name": "variable.parameter.nez"
                 },
-                "3": {
+                "5": {
                     "name": "punctuation.definition.string.begin.nez"
                 }
             },
+            "patterns": [
+                {
+                    "match": "\\\\(x\\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)",
+                    "name": "constant.character.escape.nez"
+                },
+                { "name": "string.quoted.back.nez",
+                  "match": "."
+                }
+            ],
             "end": "'''",
             "endCaptures": {
               "0": {
                 "name": "punctuation.definition.string.end.nez"
               }
             },
-            "name": "string.quoted.back.nez",
-            "patterns": [
-                {
-                    "match": "\\\\(x\\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)",
-                    "name": "constant.character.escape.nez"
-                }
-            ]
+            "name": "variable.parameter.nez"
         },
+
         "exampleDoubleStmt": {
-            "begin": "^(example[!]?)\\s*([a-zA-Z$_][a-zA-Z$_0-9]*)\\s*(\"\"\")\\s*$",
+            "begin": "^(example[!]?)\\s*([a-zA-Z$_][a-zA-Z$_0-9]*)(([&])([a-zA-Z$_][a-zA-Z$_0-9]*))*\\s*(\"\"\")\\s*$",
             "beginCaptures": {
                 "1": {
                     "name": "keyword.operator.nez"
@@ -395,6 +402,12 @@
                     "name": "variable.parameter.nez"
                 },
                 "3": {
+                    "name": "variable.parameter.nez"
+                },
+                "4": {
+                    "name": "keyword.operator.nez"
+                },
+                "5": {
                     "name": "punctuation.definition.string.begin.nez"
                 }
             },
@@ -413,7 +426,7 @@
             ]
         },
         "exampleBackStmt": {
-            "begin": "^(example[!]?)\\s*([a-zA-Z$_][a-zA-Z$_0-9]*)\\s*(```)\\s*$",
+            "begin": "^(example[!]?)\\s*([a-zA-Z$_][a-zA-Z$_0-9]*)(([&])([a-zA-Z$_][a-zA-Z$_0-9]*))*\\s*(```)\\s*$",
             "beginCaptures": {
                 "1": {
                     "name": "keyword.operator.nez"
@@ -421,7 +434,13 @@
                 "2": {
                     "name": "variable.parameter.nez"
                 },
-                "3": {
+                "4": {
+                    "name": "keyword.operator.nez"
+                },
+                "5": {
+                    "name": "variable.parameter.nez"
+                },
+                "6": {
                     "name": "punctuation.definition.string.begin.nez"
                 }
             },
@@ -438,6 +457,26 @@
                     "name": "constant.character.escape.nez"
                 }
             ]
+        },
+        "exampleLine":{
+          "match": "(example)\\s+([a-zA-Z$_][a-zA-Z$_0-9]*)(([&])([a-zA-Z$_][a-zA-Z$_0-9]*))*\\s+(.+)$",
+          "captures": {
+            "1": {
+                "name": "keyword.operator.nez"
+            },
+            "2": {
+                "name": "entity.name.type"
+            },
+            "4": {
+                "name": "keyword.operator.nez"
+            },
+            "5": {
+                "name": "entity.name.type"
+            },
+            "6": {
+                "name": "string.quoted.back.nez"
+            }
+          }
         },
         "nezExtention": {
           "match": "<(if|on|block|def|is|isa|exists|local)",

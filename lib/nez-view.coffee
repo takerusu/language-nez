@@ -10,7 +10,10 @@ module.exports =
         @div =>
           @textarea outlet:'editor', style:'line-height:20px;height:30px', class:'native-key-bindings', placeholder: ''
           @select outlet: 'ruleView', class:'rule-view'
+        @div outlet:'msgbtn', "..."
         @div =>
+          @pre outlet:'msgView', style:'display:none',  =>
+            @code outlet:'message'
           @pre =>
             @code outlet:'result', class:'result-view', "results"
 
@@ -18,19 +21,33 @@ module.exports =
       @editor.on 'core:confirm', @confirm
       @editor.on 'input', @autosize
       @editor.on 'core:cancel', @hide
+      @msgbtn.on 'click', @toggleMessage
       #@editor.on 'blur', @blur
       #console.log @panel
 
     cancelled: =>
       @hide()
 
+    toggleMessage: (msg) =>
+      if @msgView.css("display") is "none"
+        @msgView.css("display", "block")
+      else
+        @msgView.css("display", "none")
+
     confirm: (e) =>
       #console.log e
       #if e.keyCode is 13
       @nez.startPoint = @ruleView.val()
-      @nez.run(@editor.val()).then((res) =>
-        console.log res.stdout
-        @result.text(res.stdout)
+      @nez.run(@editor.val())
+      .then((res) =>
+        console.log message = /([\s\S]*)(^|\n)(#[\s\S]*)/.exec(res.stdout)
+        if message?
+          @message.text(message[1])
+          @result.text(message[3])
+      )
+      .fail((err) =>
+        console.log(err)
+        @result.text(err.stderr)
       )
 
     autosize: (e) =>
@@ -59,6 +76,7 @@ module.exports =
       @createRuleView
       @panel.show()
       @editor.focus()
+      @msgView.css("display", "none")
       @editor.select()
 
     createRuleView: =>
