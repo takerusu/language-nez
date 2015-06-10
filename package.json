@@ -14,7 +14,8 @@
   "activationCommands": {
     "atom-workspace": [
       "nez:toggle",
-      "nez:set starting point"
+      "nez:set starting point",
+      "nez:go-to-declaration"
     ]
   },
   "dependencies": {

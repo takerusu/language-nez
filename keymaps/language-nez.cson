@@ -9,3 +9,6 @@
   'enter': 'core:confirm'
 '.nez-view textarea':
   'enter': 'core:confirm'
+
+'atom-workspace':
+  'f12': 'nez:go-to-declaration'

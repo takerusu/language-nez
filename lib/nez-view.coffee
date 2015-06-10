@@ -1,4 +1,5 @@
-{View} = require 'atom'
+{View} = require 'atom-space-pen-views'
+_atom = require 'atom'
 
 module.exports =
   class NezView extends View
@@ -8,7 +9,7 @@ module.exports =
     @content: ->
       @div class:'nez-view', =>
         @div =>
-          @textarea outlet:'editor', style:'line-height:20px;height:30px', class:'native-key-bindings', placeholder: ''
+          @textarea outlet:'editor', style:'line-height:20px;height:30px;color:initial', class:'native-key-bindings', placeholder: ''
           @select outlet: 'ruleView', class:'rule-view'
         @div outlet:'msgbtn', "..."
         @div =>
@@ -30,9 +31,9 @@ module.exports =
 
     toggleMessage: (msg) =>
       if @msgView.css("display") is "none"
-        @msgView.css("display", "block")
+        @msgView.show()
       else
-        @msgView.css("display", "none")
+        @msgView.hide()
 
     confirm: (e) =>
       #console.log e
@@ -82,8 +83,8 @@ module.exports =
     createRuleView: =>
       if @nez.ruleSet?
         @ruleView.empty()
-        for rule in @nez.ruleSet
-          @ruleView.append "<option value=#{rule}>#{rule}</option>"
+        for key of @nez.ruleSet
+          @ruleView.append "<option value=#{key}>#{key}</option>"
         #console.log @nez.startPoint
         @setStartingPoint()
 
@@ -94,10 +95,10 @@ module.exports =
 
     toggle: (nez) ->
       @nez = nez
+      @createRuleView()
       Object.observe @nez, (changes)=>
         changes.forEach (change, i)=>
-          #console.log change.name
-          @createRuleView() if change.name is "ruleSet"
+          console.log change.name
           @setStartingPoint() if change.name is "startPoint"
 
       if @panel?.isVisible()

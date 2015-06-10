@@ -12,6 +12,10 @@
           {
             'label': 'Set starting point'
             'command': 'nez:set starting point'
+          },
+          {
+            'label': 'Go To Declaration'
+            'command': 'nez:go-to-declaration'
           }
         ]
       }

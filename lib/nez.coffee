@@ -1,4 +1,5 @@
 child_process = require 'child-process-promise'
+_atom = require 'atom'
 fs = require 'fs'
 
 module.exports = NEZ =
@@ -9,13 +10,16 @@ module.exports = NEZ =
 
   nezView: null
   startPoint: ""
-  rawRuleData: ""
   ruleSet: null
 
   # nez:runで呼び出された時にrunメソッドを実行するようにする
   activate:(state) ->
     console.log "activate nez"
     @nezPath = atom.config.get('language-nez.nezPath')
+    atom.commands.add 'atom-text-editor',
+      'symbols-view:go-to-declaration': =>
+        @goToDeclaration()
+
     atom.commands.add 'atom-workspace',
       #"nez:run": => @run()
       "nez:set starting point": =>
@@ -25,27 +29,19 @@ module.exports = NEZ =
         @getRule()
         @setStartingPoint()
         @createNezView(state).toggle(@)
+      "nez:go-to-declaration": =>
+        @goToDeclaration()
       # "nez:beta": =>
       #   @beta()
     atom.config.observe 'language-nez.nezPath', (newValue) ->
       console.log "Change nez path to #{newValue}"
       @nezPath = newValue
-    Object.observe(@, (changes)=>
-      changes.forEach((change, i)=>
-        if change.name is "rawRuleData"
-          @rawRuleData = @rawRuleData.replace(/Display all.*$/, "")
-          rule = (/>>>([\s\S]*)>>>/.exec(@rawRuleData)or[])[1]
-          if rule?
-            rule = rule.split(/[ \r\n]+/)
-            @ruleSet = rule[1..-2]
-      )
-    )
 
   run:(input) ->
     # 現在開いているeditorの本体
     editor = atom.workspace.getActiveTextEditor()
-    # getUriで現在開いているファイルのパスを取得する
-    # uri = editor.getUri()
+    # getURIで現在開いているファイルのパスを取得する
+    # uri = editor.getURI()
     tmpobj = @createFileSync()
     path = tmpobj.name
     fs.writeFileSync(path, editor.getText())
@@ -70,25 +66,15 @@ module.exports = NEZ =
     @nezView
 
   getRule: ->
-    @rawRuleData = ""
     # 現在開いているeditorの本体
     editor = atom.workspace.getActiveTextEditor()
-    # getUriで現在開いているファイルのパスを取得する
-    uri = editor.getUri()
-
-    @createFile (err, path, fd)=>
-      command = "java -jar #{nezPath} -p #{path}"
-      fs.writeFileSync(path, editor.getText())
-      child_process.exec(command).progress((child)=>
-        #console.log child
-        child.stdout.on('data', (data)=>
-          #console.log "data:",data
-          @rawRuleData = @rawRuleData + data
-        )
-        child.stdin.write("\ty", ()=>
-          child.stdin.end()
-        )
-      )
+    # getURIで現在開いているファイルのパスを取得する
+    uri = editor.getURI()
+    rs = {}
+    editor.scan(/^(public|inline)?[ \t]*(\w+)/g, (obj)->
+      rs["#{obj.match[2]}"] = obj.range
+    )
+    console.log @ruleSet = rs
 
   createFile:(callback) =>
     tmp = require 'tmp'
@@ -100,5 +86,14 @@ module.exports = NEZ =
     #console.log("Dir: ", tmpobj.name)
     return tmpobj
 
-  beta: =>
-    console.log "alt-c"
+  goToDeclaration: ->
+    editor = atom.workspace.getActiveTextEditor()
+    console.log editor.getURI()?
+    if editor.getURI()?
+      unless editor.getURI().split(".").pop() is "nez"
+        return
+    @getRule()
+    console.log rule = editor.getWordUnderCursor()
+    if @ruleSet[rule]?
+      console.log sp = @ruleSet[rule].start
+      editor.setCursorBufferPosition [sp.row, sp.column]
