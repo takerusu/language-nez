@@ -96,10 +96,10 @@ module.exports =
     toggle: (nez) ->
       @nez = nez
       @createRuleView()
-      Object.observe @nez, (changes)=>
-        changes.forEach (change, i)=>
-          console.log change.name
-          @setStartingPoint() if change.name is "startPoint"
+      # Object.observe @nez, (changes)=>
+      #   changes.forEach (change, i)=>
+      #     console.log change.name
+      #     @setStartingPoint() if change.name is "startPoint"
 
       if @panel?.isVisible()
         @hide()

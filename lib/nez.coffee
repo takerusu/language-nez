@@ -2,7 +2,7 @@ child_process = require 'child-process-promise'
 _atom = require 'atom'
 fs = require 'fs'
 
-module.exports = NEZ =
+class NezManager
   config:
     nezPath:
       type: 'string'
@@ -11,8 +11,8 @@ module.exports = NEZ =
   nezView: null
   startPoint: ""
   ruleSet: null
+  ruleArray: null
 
-  # nez:runで呼び出された時にrunメソッドを実行するようにする
   activate:(state) ->
     console.log "activate nez"
     @nezPath = atom.config.get('language-nez.nezPath')
@@ -37,19 +37,22 @@ module.exports = NEZ =
       console.log "Change nez path to #{newValue}"
       @nezPath = newValue
 
+
   run:(input) ->
     # 現在開いているeditorの本体
     editor = atom.workspace.getActiveTextEditor()
-    # getURIで現在開いているファイルのパスを取得する
-    # uri = editor.getURI()
     tmpobj = @createFileSync()
     path = tmpobj.name
     fs.writeFileSync(path, editor.getText())
-    einput = input.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"")
+    #einput = input.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"")
     #java -jar nez.jar -p input.nez
     command = "java -jar #{@nezPath} parse -p #{path}"
     command = "#{command} -s #{@startPoint}" unless @startPoint is ""
-    command = "#{command} -t \"#{einput}\""
+    inputobj = @createFileSync()
+    inputPath = inputobj.name
+    fs.writeFileSync(inputPath, input)
+    console.log input
+    command = "#{command} -i #{inputPath}"
     #console.log command
     return child_process.exec(command)
     #child = child_process.spawn("java", ['-jar', nez_path, '-p', uri])
@@ -71,16 +74,20 @@ module.exports = NEZ =
     # getURIで現在開いているファイルのパスを取得する
     uri = editor.getURI()
     rs = {}
-    editor.scan(/^(public|inline)?[ \t]*(\w+)/g, (obj)->
+    @ruleArray = []
+    editor.scan(/^(public|inline)?[ \t]*(\w+)/g, (obj)=>
       rs["#{obj.match[2]}"] = obj.range
+      @ruleArray.push({name:obj.match[2], range:obj.range})
     )
+    sortFunc = (a,b)-> if a.range.start.row>b.range.start.row then 1 else -1
+    console.log @ruleArray = @ruleArray.sort sortFunc
     console.log @ruleSet = rs
 
-  createFile:(callback) =>
+  createFile:(callback) ->
     tmp = require 'tmp'
     tmp.file callback
 
-  createFileSync: =>
+  createFileSync: ->
     tmp = require 'tmp'
     tmpobj = tmp.fileSync()
     #console.log("Dir: ", tmpobj.name)
@@ -97,3 +104,10 @@ module.exports = NEZ =
     if @ruleSet[rule]?
       console.log sp = @ruleSet[rule].start
       editor.setCursorBufferPosition [sp.row, sp.column]
+
+  beta: ->
+    editor = atom.workspace.getActiveTextEditor()
+    cp = editor.getCursorBufferPosition()
+    console.log @ruleArray.find (ele)-> ele > cp.row
+
+module.exports = new NezManager()

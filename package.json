@@ -11,13 +11,6 @@
     "atom": "*",
     "node": "*"
   },
-  "activationCommands": {
-    "atom-workspace": [
-      "nez:toggle",
-      "nez:set starting point",
-      "nez:go-to-declaration"
-    ]
-  },
   "dependencies": {
     "atom-space-pen-views": "^2.0.3",
     "child-process-promise": "^1.1.0",
