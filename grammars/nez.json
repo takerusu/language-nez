@@ -293,6 +293,68 @@
         "exprLabel": {
             "match": "#[a-zA-Z$_][a-zA-Z$_0-9]*(\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*",
             "name": "entity.name.function"
+        },"literalTripleDouble": {
+            "begin": "\"\"\"",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.begin.nez"
+                }
+            },
+            "end": "\"\"\"",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.end.nez"
+                }
+            },
+            "name": "string.quoted.double.nez",
+            "patterns": [
+                {
+                    "match": "\\\\(x\\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]|37[0-7]?|[4-7][0-7]?|.)",
+                    "name": "constant.character.escape.nez"
+                }
+            ]
+        },
+        "literalTripleSingle": {
+            "begin": "'''",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.begin.nez"
+                }
+            },
+            "end": "'''",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.end.nez"
+                }
+            },
+            "name": "string.quoted.single.nez",
+            "patterns": [
+                {
+                    "match": "\\\\(x\\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)",
+                    "name": "constant.character.escape.nez"
+                }
+            ]
+        },
+        "literalTripleBack": {
+            "begin": "```",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.begin.nez"
+                }
+            },
+            "end": "```",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.end.nez"
+                }
+            },
+            "name": "string.quoted.back.nez",
+            "patterns": [
+                {
+                    "match": "\\\\(x\\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)",
+                    "name": "constant.character.escape.nez"
+                }
+            ]
         },
         "literalDouble": {
             "begin": "\"",
@@ -361,122 +423,28 @@
             "match": "[/.+*?&!=@^]",
             "name": "keyword.operator.nez"
         },
-        "exampleSingleStmt": {
-            "begin": "^(example[!]?)\\s*([a-zA-Z$_][a-zA-Z$_0-9]*)([&]([a-zA-Z$_][a-zA-Z$_0-9]*))*\\s*(''')\\s*$",
-            "beginCaptures": {
-                "1": {
-                    "name": "keyword.operator.nez"
-                },
-                "2": {
-                    "name": "variable.parameter.nez"
-                },
-                "5": {
-                    "name": "punctuation.definition.string.begin.nez"
-                }
-            },
-            "patterns": [
-                {
-                    "match": "\\\\(x\\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)",
-                    "name": "constant.character.escape.nez"
-                },
-                { "name": "string.quoted.back.nez",
-                  "match": "."
-                }
-            ],
-            "end": "'''",
-            "endCaptures": {
-              "0": {
-                "name": "punctuation.definition.string.end.nez"
-              }
-            },
-            "name": "variable.parameter.nez"
-        },
-
-        "exampleDoubleStmt": {
-            "begin": "^(example[!]?)\\s*([a-zA-Z$_][a-zA-Z$_0-9]*)(([&])([a-zA-Z$_][a-zA-Z$_0-9]*))*\\s*(\"\"\")\\s*$",
-            "beginCaptures": {
-                "1": {
-                    "name": "keyword.operator.nez"
-                },
-                "2": {
-                    "name": "variable.parameter.nez"
-                },
-                "3": {
-                    "name": "variable.parameter.nez"
-                },
-                "4": {
-                    "name": "keyword.operator.nez"
-                },
-                "5": {
-                    "name": "punctuation.definition.string.begin.nez"
-                }
-            },
-            "end": "\"\"\"",
-            "endCaptures": {
-              "0": {
-                "name": "punctuation.definition.string.end.nez"
-              }
-            },
-            "name": "string.quoted.back.nez",
-            "patterns": [
-                {
-                    "match": "\\\\(x\\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)",
-                    "name": "constant.character.escape.nez"
-                }
-            ]
-        },
-        "exampleBackStmt": {
-            "begin": "^(example[!]?)\\s*([a-zA-Z$_][a-zA-Z$_0-9]*)(([&])([a-zA-Z$_][a-zA-Z$_0-9]*))*\\s*(```)\\s*$",
-            "beginCaptures": {
-                "1": {
-                    "name": "keyword.operator.nez"
-                },
-                "2": {
-                    "name": "variable.parameter.nez"
-                },
-                "4": {
-                    "name": "keyword.operator.nez"
-                },
-                "5": {
-                    "name": "variable.parameter.nez"
-                },
-                "6": {
-                    "name": "punctuation.definition.string.begin.nez"
-                }
-            },
-            "end": "```",
-            "endCaptures": {
-              "0": {
-                "name": "punctuation.definition.string.end.nez"
-              }
-            },
-            "name": "string.quoted.back.nez",
-            "patterns": [
-                {
-                    "match": "\\\\(x\\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)",
-                    "name": "constant.character.escape.nez"
-                }
-            ]
-        },
         "exampleLine":{
-          "match": "(example)\\s+([a-zA-Z$_][a-zA-Z$_0-9]*)(([&])([a-zA-Z$_][a-zA-Z$_0-9]*))*\\s+(.+)$",
-          "captures": {
+          "begin": "(example)\\s+",
+          "beginCaptures": {
             "1": {
-                "name": "keyword.operator.nez"
-            },
-            "2": {
-                "name": "entity.name.type"
-            },
-            "4": {
-                "name": "keyword.operator.nez"
-            },
-            "5": {
-                "name": "entity.name.type"
-            },
-            "6": {
-                "name": "string.quoted.back.nez"
+              "name": "keyword.operator.nez"
             }
-          }
+          },
+          "patterns": [
+            {
+              "match": "[&]",
+              "name": "keyword.operator.nez"
+            },
+            {
+              "match": "(example\\b|[&])([a-zA-Z$_][a-zA-Z$_0-9]*)",
+              "captures": {
+                "2": {
+                  "name": "variable.parameter.nez"
+                }
+              }
+            }
+          ],
+          "end": "((?=('''|\"\"\"|```))|$)"
         },
         "nezExtention": {
           "match": "<(if|on|block|def|is|isa|exists|local)",

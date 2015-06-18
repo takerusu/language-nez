@@ -23,5 +23,7 @@ You can test your NEZ file.
 If you select a rule in editor and execute this Command, the rule is set as starting point.
 you can also set starting point in the Packages menu **Set starting point**.
 
+### Go To Declaration
+`F12` or **Go To Declaration** in the right click menu
 
 [nl]:http://nez-peg.github.io/
