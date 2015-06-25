@@ -41,7 +41,7 @@ class NezManager
       console.log "Change nez path to #{newValue}"
       @nezPath = newValue
     atom.workspace.onDidChangeActivePaneItem (editor) =>
-      if !editor.getURI()? || editor.getURI().match(/\.nez$/)
+      if !editor.getURI()? || editor.getGrammar().name is "NEZ"
         @getRule()
 
 
@@ -94,7 +94,7 @@ class NezManager
     uri = editor.getURI()
     rs = {}
     @ruleArray = []
-    editor.scan(/^(public|inline)?[ \t]*(\w+)((?!=)[\s\S])*=/g, (obj)=>
+    editor.scan(/^(public|inline)?[ \t]*(\w+)((?!=)[\n\r\s])*=/g, (obj)=>
       rs["#{obj.match[2]}"] = obj.range
       @ruleArray.push({name:obj.match[2], range:obj.range})
     )
