@@ -40,6 +40,9 @@ class NezManager
     atom.config.observe 'language-nez.nezPath', (newValue) ->
       console.log "Change nez path to #{newValue}"
       @nezPath = newValue
+    atom.workspace.onDidChangeActivePaneItem (editor) =>
+      if !editor.getURI()? || editor.getURI().match(/\.nez$/)
+        @getRule()
 
 
   run:(input) ->
@@ -91,13 +94,13 @@ class NezManager
     uri = editor.getURI()
     rs = {}
     @ruleArray = []
-    editor.scan(/^(public|inline)?[ \t]*(\w+)/g, (obj)=>
+    editor.scan(/^(public|inline)?[ \t]*(\w+)((?!=)[\s\S])*=/g, (obj)=>
       rs["#{obj.match[2]}"] = obj.range
       @ruleArray.push({name:obj.match[2], range:obj.range})
     )
     sortFunc = (a,b)-> if a.range.start.row>b.range.start.row then 1 else -1
-    console.log @ruleArray = @ruleArray.sort sortFunc
-    console.log @ruleSet = rs
+    @ruleArray = @ruleArray.sort sortFunc
+    @ruleSet = rs
 
   createFile:(callback) ->
     tmp = require 'tmp'

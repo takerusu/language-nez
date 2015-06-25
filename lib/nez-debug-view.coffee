@@ -74,11 +74,14 @@ module.exports =
 
     hide: =>
       atom.commands.dispatch(atom.views.getView(atom.workspace), 'focus')
-      @nezDebugger.suspend()
+      @nezDebugger?.suspend()
       @subscriptions.dispose()
       @panel.hide()
 
     show: =>
+      atom.workspace.onDidChangeActivePaneItem (editor) =>
+        @createRuleView()
+        @nezDebugger?.suspend()
       @panel ?= atom.workspace.addBottomPanel({ item: this, priority: 1000, visible: true })
       @createRuleView()
       @subscriptions = new CompositeDisposable

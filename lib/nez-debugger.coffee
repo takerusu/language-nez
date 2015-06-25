@@ -34,31 +34,39 @@ module.exports = class NezDebugger
       console.log s.search(@command) != -1
       if s.search(@command) != -1
         start = s.search(@command)
+        last = s.length
         @isOutput = true
       if @isOutput and s.search(@dbConsole) != -1
         last = s.search(@dbConsole) - 1
         @isOutput = false
       @outs += s.slice(start, last)
       console.log s
-      if !@isOutput and @output?
+      if !@isOutput and @outs?
         @Out()
-    @process.stderr.on 'data', (data)->
+    @process.stderr.on 'data', (data)=>
       console.log data.toString()
+      @output.text(data.toString())
     @process.on 'exit', (code, signal)=>
-      if @output?
-        @Out
+      if @outs?
+        @Out()
       console.log 'terminated: ', signal
       @process = null
       console.log @process
     @process
 
   Out: () ->
-    console.log "outs: ", @outs
-    if @outs.match(/\n/g)?.length > 1
-      start = @outs.search(/\n([\s\S])*/g)
-      last = @outs.search(/\n.*$/)
-      @outs = @outs.slice(start, last)
-    @output.text(@outs)
+    if @outs? && @outs is not ""
+      console.log "outs: ", @outs
+      if @outs.match(/\n/g)?.length > 1
+        start = @outs.search(/\n([\s\S])*/g)
+        last = @outs.search(/\n.*$/)
+        @outs = @outs.slice(start, last)
+      line = @outs.match(/tmp:([0-9]+)\) \[debug\]/)?[1]
+      if line?
+        editor = atom.workspace.getActiveTextEditor()
+        editor.setCursorBufferPosition [parseInt(line)-1, 0]
+        editor.selectLinesContainingCursors()
+      @output.text(@outs)
     @isOutput = false
     @outs = ""
 
