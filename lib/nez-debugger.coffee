@@ -7,8 +7,10 @@ module.exports = class NezDebugger
   @outs = null
   @isOutput = null
 
-  constructor: (@inputPath, @output) ->
+  constructor: (@inputPath, view) ->
     @outs = ""
+    @resultv = view.find('.result-view code')
+    @printv = view.find('.print-view code')
     @isOutput = false
     @dbConsole = "(nezdb)"
 
@@ -16,6 +18,8 @@ module.exports = class NezDebugger
     @process?.kill()
 
   init: () ->
+    if @process?
+      return @process
     @outs = ""
     @isOutput = false
     nezPath = atom.config.get 'language-nez.nezPath'
@@ -45,17 +49,19 @@ module.exports = class NezDebugger
         @Out()
     @process.stderr.on 'data', (data)=>
       console.log data.toString()
-      @output.text(data.toString())
+      @resultv.text(data.toString())
     @process.on 'exit', (code, signal)=>
+      @command = ""
       if @outs?
         @Out()
+      @printv.text("")
       console.log 'terminated: ', signal
       @process = null
       console.log @process
-    @process
+    return @process
 
   Out: () ->
-    if @outs? && @outs is not ""
+    if @outs? and !(@outs is "")
       console.log "outs: ", @outs
       if @outs.match(/\n/g)?.length > 1
         start = @outs.search(/\n([\s\S])*/g)
@@ -66,7 +72,12 @@ module.exports = class NezDebugger
         editor = atom.workspace.getActiveTextEditor()
         editor.setCursorBufferPosition [parseInt(line)-1, 0]
         editor.selectLinesContainingCursors()
-      @output.text(@outs)
+      if @command is "p -ctx pos\n"
+        @printv.text(@outs)
+      else
+        @resultv.text(@outs)
+        if @process? and !(@command is "")
+          @Print()
     @isOutput = false
     @outs = ""
 
@@ -93,7 +104,7 @@ module.exports = class NezDebugger
 
   exec: (input) ->
     @command = input
-    cp = (if @process? then @process else @init())
+    cp = @init()
     cp.stdin.write input, ()->
       console.log "exec: ", input
 

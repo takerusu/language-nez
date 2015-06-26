@@ -17,8 +17,6 @@ module.exports =
               @i class:'fa fa-play'
             @button outlet:'quit', id:'quit', class:'btn btn-icon', =>
               @i class:'fa fa-stop'
-          @button outlet:'print', id:'print', class:'btn btn-icon mleft', =>
-            @i class:'fa fa-print'
           @div class:'btn-group mleft', =>
             @button outlet:'stepin', id:'stepin', class:'btn btn-icon', =>
               @i class:'fa fa-level-down'
@@ -30,11 +28,12 @@ module.exports =
           @button outlet:'breakpoint', id:'breakpoint', class:'btn btn-icon mleft', =>
             @i class:'fa fa-tag'
           @input outlet:'inputfile', type:'file', style:'display:inline;', class:'mleft'
-        @div =>
-          @pre outlet:'msgView', style:'display:none',  =>
-            @code outlet:'message'
+          @button outlet:'hideb', id:'hide', class:'btn pull-right mleft', "Hide"
+        @div outlet:'result', =>
           @pre class:'result-view', =>
-            @code outlet:'result', "results"
+            @code "results"
+          @pre class:'print-view',  =>
+            @code ""
 
     initialize: ->
       @run.on 'click', @confirm
@@ -43,7 +42,10 @@ module.exports =
       @stepover.on 'click', @confirm
       @stepreturn.on 'click', @confirm
       @breakpoint.on 'click', @confirm
-      @print.on 'click', @confirm
+      @hideb.on 'click', @hide
+
+    initDebuggger: =>
+      @getNezdebugger().init()
 
     confirm:(e) =>
       if @inputfile[0].files.length < 1
