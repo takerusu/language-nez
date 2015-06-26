@@ -16,6 +16,10 @@
           {
             'label': 'Go To Declaration'
             'command': 'nez:go-to-declaration'
+          },
+          {
+            'label': 'Debugger'
+            'command': 'nez:debug toggle'
           }
         ]
       }

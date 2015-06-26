@@ -26,4 +26,11 @@ you can also set starting point in the Packages menu **Set starting point**.
 ### Go To Declaration
 `F12` or **Go To Declaration** in the right click menu
 
+### Debugger
+**Debugger** in the Package menu.
+1. Press **Choose File**, and choose a input file to parse by the NEZ file you are currently editing.
+2. Select *breakpoint* from a drop-down list, and press the Button **Set Breakpoint**.
+3. Press the Button **Run**.
+4. Do as you think best.
+
 [nl]:http://nez-peg.github.io/
