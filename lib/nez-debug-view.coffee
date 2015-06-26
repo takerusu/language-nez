@@ -71,13 +71,16 @@ module.exports =
       if !@nezDebugger?
         NezDebugger = require './nez-debugger'
         return @nezDebugger = new NezDebugger(@inputPath, @result)
-      return @nezDebugger
+      return @nezDebugger.setFile(@inputPath)
 
 
     hide: =>
       atom.commands.dispatch(atom.views.getView(atom.workspace), 'focus')
       @nezDebugger?.suspend()
       @subscriptions.dispose()
+      @result.find('.result-view code').text('')
+      @result.find('.print-view code').text('')
+      @inputfile.val('')
       @panel.hide()
 
     show: =>
@@ -97,6 +100,8 @@ module.exports =
         title: 'Set Breakpoint'
       @subscriptions.add atom.tooltips.add @run,
         title: 'Run'
+      @subscriptions.add atom.tooltips.add @quit,
+        title: 'Quit'
       @subscriptions.add atom.tooltips.add @print,
         title: 'Print'
       @panel.show()

@@ -17,6 +17,10 @@ module.exports = class NezDebugger
   suspend: () ->
     @process?.kill()
 
+  setFile: (path) ->
+    @inputPath = path
+    @
+
   init: () ->
     if @process?
       return @process
@@ -35,7 +39,6 @@ module.exports = class NezDebugger
       last = 0
       if @isOutput
         last = s.length
-      console.log s.search(@command) != -1
       if s.search(@command) != -1
         start = s.search(@command)
         last = s.length
