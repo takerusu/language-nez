@@ -32,7 +32,7 @@ module.exports = class NezDebugger
     path = tmpobj.name
     fs.writeFileSync(path, editor.getText())
     command = ["-jar", "#{nezPath}", "debug", "-p", "#{path}", "-i", "#{@inputPath}"]
-    @process = child_process.exec("java -jar #{nezPath} debug -p #{path} -i #{@inputPath}")
+    @process = child_process.exec("java -jar #{nezPath} ndb -p #{path} -i #{@inputPath}")
     @process.stdout.on 'data', (data)=>
       s = data.toString()
       start = 0
