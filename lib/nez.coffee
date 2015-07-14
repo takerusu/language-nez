@@ -1,6 +1,8 @@
 child_process = require 'child-process-promise'
 _atom = require 'atom'
+{Range} = require 'atom'
 fs = require 'fs'
+parser = require './nez-parser'
 
 class NezManager
   config:
@@ -46,7 +48,7 @@ class NezManager
     fs.writeFileSync(path, editor.getText())
     #einput = input.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"")
     #java -jar nez.jar -p input.nez
-    command = "java -jar #{@nezPath} parse -p #{path}"
+    command = "java -jar #{@nezPath} ast -p #{path}"
     command = "#{command} -s #{@startPoint}" unless @startPoint is ""
     inputobj = @createFileSync()
     inputPath = inputobj.name
@@ -75,12 +77,37 @@ class NezManager
     uri = editor.getURI()
     rs = {}
     @ruleArray = []
-    editor.scan(/^(public|inline)?[ \t]*(\w+)/g, (obj)=>
-      rs["#{obj.match[2]}"] = obj.range
-      @ruleArray.push({name:obj.match[2], range:obj.range})
+    results = parser.parse editor.getText()
+    nl = [0]
+    editor.scan(/\n/g, (obj) ->
+      nl.push obj.match.index
     )
+    rules = []
+    for result in results.value
+      if result.tag is "Production"
+        rule = {}
+        for val in result.value
+          if val.tag is "Name"
+            rule.name = val.value
+            break
+        rule.pos = result.value[0].pos
+        rules.push rule
+    #console.log rules
+    if nl.length > 1
+      i = 0
+      n = 0
+      while n isnt rules.length and i+1 isnt nl.length
+        if nl[i] <= rules[n].pos.start < nl[i+1]
+          s = rules[n].pos.start
+          e = rules[n].pos.end
+          rules[n].range = new Range([i, s-nl[i]-1], [i+1, s-nl[i]-1])
+          rs[rules[n].name] = rules[n].range
+          n++
+        i++
+
+
     sortFunc = (a,b)-> if a.range.start.row>b.range.start.row then 1 else -1
-    console.log @ruleArray = @ruleArray.sort sortFunc
+    console.log @ruleArray = rules
     console.log @ruleSet = rs
 
   createFile:(callback) ->
