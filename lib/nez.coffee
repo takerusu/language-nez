@@ -123,7 +123,6 @@ class NezManager
 
   goToDeclaration: ->
     editor = atom.workspace.getActiveTextEditor()
-    @lastPoss.push editor.getCursorBufferPosition()
     console.log editor.getURI()?
     if editor.getURI()?
       unless editor.getURI().split(".").pop() is "nez"
@@ -132,6 +131,7 @@ class NezManager
     console.log rule = editor.getWordUnderCursor()
     if @ruleSet[rule]?
       console.log sp = @ruleSet[rule].start
+      @lastPoss.push editor.getCursorBufferPosition()
       editor.setCursorBufferPosition [sp.row, sp.column]
 
   setCursorLastPos: ->
