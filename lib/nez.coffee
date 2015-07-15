@@ -14,9 +14,11 @@ class NezManager
   startPoint: ""
   ruleSet: null
   ruleArray: null
+  lastPoss: null
 
   activate:(state) ->
     console.log "activate nez"
+    @lastPoss = []
     @nezPath = atom.config.get('language-nez.nezPath')
     atom.commands.add 'atom-text-editor',
       'symbols-view:go-to-declaration': =>
@@ -33,6 +35,8 @@ class NezManager
         @createNezView(state).toggle(@)
       "nez:go-to-declaration": =>
         @goToDeclaration()
+      "nez:last-edit-position": =>
+        @setCursorLastPos()
       # "nez:beta": =>
       #   @beta()
     atom.config.observe 'language-nez.nezPath', (newValue) ->
@@ -104,9 +108,6 @@ class NezManager
           rs[rules[n].name] = rules[n].range
           n++
         i++
-
-
-    sortFunc = (a,b)-> if a.range.start.row>b.range.start.row then 1 else -1
     console.log @ruleArray = rules
     console.log @ruleSet = rs
 
@@ -122,6 +123,7 @@ class NezManager
 
   goToDeclaration: ->
     editor = atom.workspace.getActiveTextEditor()
+    @lastPoss.push editor.getCursorBufferPosition()
     console.log editor.getURI()?
     if editor.getURI()?
       unless editor.getURI().split(".").pop() is "nez"
@@ -131,6 +133,10 @@ class NezManager
     if @ruleSet[rule]?
       console.log sp = @ruleSet[rule].start
       editor.setCursorBufferPosition [sp.row, sp.column]
+
+  setCursorLastPos: ->
+    console.log lastPos = @lastPoss.pop()
+    atom.workspace.getActiveTextEditor().setCursorBufferPosition lastPos if lastPos
 
   beta: ->
     editor = atom.workspace.getActiveTextEditor()

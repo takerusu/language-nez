@@ -16,6 +16,10 @@
           {
             'label': 'Go To Declaration'
             'command': 'nez:go-to-declaration'
+          },
+          {
+            'label': 'Last Edit Position'
+            'command': 'nez:last-edit-position'
           }
         ]
       }

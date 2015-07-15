@@ -24,6 +24,7 @@ If you select a rule in editor and execute this Command, the rule is set as star
 you can also set starting point in the Packages menu **Set starting point**.
 
 ### Go To Declaration
-`F12` or **Go To Declaration** in the right click menu
+`alt-cmd-n` or **Go To Declaration** in the right click menu.
+You can return the cursor to the last edit position `alt-cmd-b` or **Last Edit Position** in the Packages menu.
 
 [nl]:http://nez-peg.github.io/

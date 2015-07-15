@@ -11,4 +11,5 @@
   'enter': 'core:confirm'
 
 'atom-workspace':
-  'f12': 'nez:go-to-declaration'
+  'alt-cmd-n': 'nez:go-to-declaration'
+  'alt-cmd-b': 'nez:last-edit-position'
