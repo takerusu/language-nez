@@ -37,8 +37,8 @@ class NezManager
         @goToDeclaration()
       "nez:last-edit-position": =>
         @setCursorLastPos()
-      # "nez:beta": =>
-      #   @beta()
+      "nez:beta": =>
+        @beta()
     atom.config.observe 'language-nez.nezPath', (newValue) ->
       console.log "Change nez path to #{newValue}"
       @nezPath = newValue
@@ -139,8 +139,6 @@ class NezManager
     atom.workspace.getActiveTextEditor().setCursorBufferPosition lastPos if lastPos
 
   beta: ->
-    editor = atom.workspace.getActiveTextEditor()
-    cp = editor.getCursorBufferPosition()
-    console.log @ruleArray.find (ele)-> ele > cp.row
+    vmjs = require './vendor/vismodel.js'
 
 module.exports = new NezManager()

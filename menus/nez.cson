@@ -18,6 +18,10 @@
             'command': 'nez:go-to-declaration'
           },
           {
+            'label': 'Debugger'
+            'command': 'nez:debug toggle'
+          },
+          {
             'label': 'Last Edit Position'
             'command': 'nez:last-edit-position'
           }
