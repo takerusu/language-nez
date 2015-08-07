@@ -42,6 +42,11 @@ class NezManager
     atom.config.observe 'language-nez.nezPath', (newValue) ->
       console.log "Change nez path to #{newValue}"
       @nezPath = newValue
+    atom.workspace.onDidChangeActivePaneItem (editor) =>
+      @nezView?.hide()
+      if editor?
+        if !(editor.getURI()?) || editor.getGrammar?().name is "NEZ"
+          @getRule()
 
 
   run:(input) ->
