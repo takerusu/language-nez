@@ -61,7 +61,11 @@ class NezManager
         new NezPreviewView(editorId: pathname.substring(1))
       else
         new NezPreviewView(filePath: pathname)
-
+    atom.workspace.onDidChangeActivePaneItem (editor) =>
+      @nezView?.hide()
+      if editor?
+        if !(editor.getURI()?) || editor.getGrammar?().name is "NEZ"
+          @getRule()
 
   run:(input) ->
     # 現在開いているeditorの本体
@@ -106,6 +110,8 @@ class NezManager
       nl.push obj.match.index
     )
     rules = []
+    if !results.value?
+      return
     for result in results.value
       if result.tag is "Production"
         rule = {}
@@ -127,8 +133,8 @@ class NezManager
           rs[rules[n].name] = rules[n].range
           n++
         i++
-    console.log @ruleArray = rules
-    console.log @ruleSet = rs
+    @ruleArray = rules
+    @ruleSet = rs
 
   createFile:(callback) ->
     tmp = require 'tmp'
