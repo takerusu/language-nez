@@ -2,6 +2,8 @@ child_process = require 'child-process-promise'
 _atom = require 'atom'
 {Range} = require 'atom'
 fs = require 'fs'
+url = require 'url'
+path = require 'path'
 parser = require './nez-parser'
 
 class NezManager
@@ -42,6 +44,23 @@ class NezManager
     atom.config.observe 'language-nez.nezPath', (newValue) ->
       console.log "Change nez path to #{newValue}"
       @nezPath = newValue
+    atom.workspace.addOpener (uriToOpen) ->
+      try
+        {protocol, host, pathname} = url.parse(uriToOpen)
+      catch error
+        return
+
+      return unless protocol is 'nez-preview:'
+
+      try
+        pathname = decodeURI(pathname) if pathname
+      catch error
+        return
+      NezPreviewView = require './nez-preview-view'
+      if host is 'editor'
+        new NezPreviewView(editorId: pathname.substring(1))
+      else
+        new NezPreviewView(filePath: pathname)
 
 
   run:(input) ->
@@ -138,7 +157,17 @@ class NezManager
     console.log lastPos = @lastPoss.pop()
     atom.workspace.getActiveTextEditor().setCursorBufferPosition lastPos if lastPos
 
+  uriForEditor: (editor) ->
+    "nez-preview://editor/#{editor.id}"
+
   beta: ->
+    editor = atom.workspace.getActiveTextEditor()
+    return unless editor.getGrammar().scopeName in ["source.nez"]
     vmjs = require './vendor/vismodel.js'
+    uri = @uriForEditor(editor)
+    options =
+      searchAllPanes: true
+      split: 'right'
+    atom.workspace.open(uri, options)
 
 module.exports = new NezManager()
