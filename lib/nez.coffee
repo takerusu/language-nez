@@ -64,7 +64,7 @@ class NezManager
     atom.workspace.onDidChangeActivePaneItem (editor) =>
       @nezView?.hide()
       if editor?
-        if !(editor.getURI()?) || editor.getGrammar?().name is "NEZ"
+        if editor.getGrammar?().name is "NEZ"
           @getRule()
 
   run:(input) ->
@@ -105,13 +105,13 @@ class NezManager
     rs = {}
     @ruleArray = []
     results = parser.parse editor.getText()
+    if !results.value?
+      return
     nl = [0]
     editor.scan(/\n/g, (obj) ->
       nl.push obj.match.index
     )
     rules = []
-    if !results.value?
-      return
     for result in results.value
       if result.tag is "Production"
         rule = {}
@@ -166,14 +166,21 @@ class NezManager
   uriForEditor: (editor) ->
     "nez-preview://editor/#{editor.id}"
 
+  isNezPreviewView: (obj) ->
+    NezPreviewView = require './nez-preview-view'
+    obj instanceof NezPreviewView
+
   beta: ->
     editor = atom.workspace.getActiveTextEditor()
+    previousActivePane = atom.workspace.getActivePane()
     return unless editor.getGrammar().scopeName in ["source.nez"]
     vmjs = require './vendor/vismodel.js'
     uri = @uriForEditor(editor)
     options =
       searchAllPanes: true
       split: 'right'
-    atom.workspace.open(uri, options)
+    atom.workspace.open(uri, options).done (preview) =>
+      if @isNezPreviewView(preview)
+        previousActivePane.activate()
 
 module.exports = new NezManager()
