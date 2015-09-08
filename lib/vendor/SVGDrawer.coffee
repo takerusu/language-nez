@@ -369,8 +369,10 @@ module.exports = class NEZDrawer extends SVGDrawer
         ret.value.push p, loops, left, right
         ret.value.push path if json.tag is "Repetition"
         ret
-      when "New", "LeftNew", "Link"
+      when "New", "LeftNew", "Link", "Is", "Block", "If", "Def"# TODO: semantic view
         @plot(json.value[json.value.length - 1], option)
+      when "Name"
+        @Textrect("NonTerminal", json.value, option)
 
   plotRect: () ->
     return {

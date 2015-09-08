@@ -19,6 +19,8 @@ module.exports =
             @code outlet:'result', class:'result-view', "results"
 
     initialize: ->
+      atom.workspace.onDidChangeActivePaneItem (editor) =>
+        @createRuleView()
       @editor.on 'core:confirm', @confirm
       @editor.on 'input', @autosize
       @editor.on 'core:cancel', @hide

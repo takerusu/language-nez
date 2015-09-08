@@ -39,6 +39,10 @@ class NezManager
         @goToDeclaration()
       "nez:last-edit-position": =>
         @setCursorLastPos()
+      "nez:debug toggle": =>
+        @getRule()
+        @setStartingPoint()
+        @createNezDebugView().toggle(@)
       "nez:beta": =>
         @beta()
     atom.config.observe 'language-nez.nezPath', (newValue) ->
@@ -49,9 +53,7 @@ class NezManager
         {protocol, host, pathname} = url.parse(uriToOpen)
       catch error
         return
-
       return unless protocol is 'nez-preview:'
-
       try
         pathname = decodeURI(pathname) if pathname
       catch error
@@ -61,6 +63,9 @@ class NezManager
         new NezPreviewView(editorId: pathname.substring(1))
       else
         new NezPreviewView(filePath: pathname)
+    atom.config.observe 'language-nez.nezPath', (newValue) ->
+      console.log "Change nez path to #{newValue}"
+      @nezPath = newValue
     atom.workspace.onDidChangeActivePaneItem (editor) =>
       @nezView?.hide()
       if editor?
@@ -86,6 +91,12 @@ class NezManager
     return child_process.exec(command)
     #child = child_process.spawn("java", ['-jar', nez_path, '-p', uri])
 
+  debug:(inputPath) ->
+    tmpobj = @createFileSync()
+    path = tmpobj.name
+    fs.writeFileSync(path, editor.getText())
+    command = "java -jar #{@nezPath} debug -p #{path} -i #{inputPath}"
+
   setStartingPoint: ->
     editor = atom.workspace.getActiveTextEditor()
     rule = editor.getSelectedText()
@@ -96,6 +107,12 @@ class NezManager
       NezView = require './nez-view'
       @nezView = new NezView()
     @nezView
+
+  createNezDebugView:(state) ->
+    unless @nezDebugView?
+      NezDebugView = require './nez-debug-view'
+      @nezDebugView = new NezDebugView()
+    @nezDebugView
 
   getRule: ->
     # 現在開いているeditorの本体
