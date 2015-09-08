@@ -39,7 +39,8 @@ module.exports =
       @disposables.add @editor.observeCursors (cursor) =>
         console.log cursor
         cursor.onDidChangePosition (e) =>
-          curpos = e.newBufferPosition
+          curpos = e.cursor.selection.getBufferRange().start
+          # curpos = e.newBufferPosition
           p = @selectRuleByPos(curpos, @rules.value)
           @show(p) if p?
 
