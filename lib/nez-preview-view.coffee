@@ -93,9 +93,12 @@ module.exports =
     show: (json) ->
       while @[0].childElementCount > 0
         @[0].removeChild(@[0].children[0])
-      vmjs = require './vendor/vismodel.js'
-      panel = new vmjs.VisualModelPanel(@[0])
-      TopNode = vmjs.createNodeViewFromP4DJson(json)
-      panel.initializeView(TopNode)
-      panel.draw()
-      panel.viewport.camera.setPositionAndScale(TopNode.centerGx, TopNode.centerGy + panel.viewport.areaHeight / 3, 1)
+      # vmjs = require './vendor/vismodel.js'
+      # panel = new vmjs.VisualModelPanel(@[0])
+      # TopNode = vmjs.createNodeViewFromP4DJson(json)
+      # panel.initializeView(TopNode)
+      # panel.draw()
+      # panel.viewport.camera.setPositionAndScale(TopNode.centerGx, TopNode.centerGy + panel.viewport.areaHeight / 3, 1)
+      NEZDrawer = require './vendor/SVGDrawer.coffee'
+      drawer = new NEZDrawer(@)
+      drawer.show(json)
