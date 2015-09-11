@@ -16,7 +16,8 @@ module.exports =
           @pre outlet:'msgView', style:'display:none',  =>
             @code outlet:'message'
           @pre =>
-            @code outlet:'result', class:'result-view', "results"
+            @code outlet:'result', style:'display:none', class:'result-view', "results"
+          @div outlet:'vis', style:'height:500px;position:relative;background:white'
 
     initialize: ->
       atom.workspace.onDidChangeActivePaneItem (editor) =>
@@ -43,15 +44,30 @@ module.exports =
       @nez.startPoint = @ruleView.val()
       @nez.run(@editor.val())
       .then((res) =>
-        console.log message = /([\s\S]*)(^|\n)(#[\s\S]*)/.exec(res.stdout)
+        # console.log message = /([\s\S]*)(^|\n)(#[\s\S]*)/.exec(res.stdout)
+        message = res.stdout
         if message?
-          @message.text(message[1])
-          @result.text(message[3])
+          # @message.text(message[1])
+          @result.text(message)
+          @visualize(message)
+
       )
       .fail((err) =>
         console.log(err)
         @result.text(err.stderr)
       )
+
+    visualize: (str) ->
+      while @vis[0].childElementCount > 0
+        @vis[0].removeChild(@vis[0].children[0])
+      json = JSON.parse(str)
+      vmjs = require './vendor/vismodel.js'
+      panel = new vmjs.VisualModelPanel(@vis[0])
+      TopNode = vmjs.createNodeViewFromP4DJson(json)
+      panel.initializeView(TopNode)
+      panel.draw()
+      panel.viewport.camera.setPositionAndScale(TopNode.centerGx,
+        TopNode.centerGy + panel.viewport.areaHeight / 3, 1)
 
     autosize: (e) =>
       #console.log "scroll:", e.target.scrollHeight
@@ -71,6 +87,8 @@ module.exports =
       @editor.css("height", "30px")
       @editor.val("")
       @result.text("results")
+      while @vis[0].childElementCount > 0
+        @vis[0].removeChild(@vis[0].children[0])
       atom.commands.dispatch(atom.views.getView(atom.workspace), 'focus')
       @panel.hide()
 

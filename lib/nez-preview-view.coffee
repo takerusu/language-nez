@@ -44,6 +44,8 @@ module.exports =
           p = @selectRuleByPos(curpos, @rules.value)
           @show(p) if p?
 
+    destroy: ->
+      @disposables.dispose()
 
     posToRange:(json, editor) ->
       rules = []

@@ -27,6 +27,8 @@ module.exports = class NezDebugger
     @outs = ""
     @isOutput = false
     nezPath = atom.config.get 'language-nez.nezPath'
+    nezPath = "~/Documents/Github/nez-1/nez.jar"
+
     editor = atom.workspace.getActiveTextEditor()
     tmpobj = @createFileSync()
     path = tmpobj.name
