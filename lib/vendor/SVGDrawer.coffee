@@ -23,6 +23,16 @@ class SVGDrawer
     @boxx = 60
     @boxy = 30
     @padding = 3
+    rect = target[0].getBoundingClientRect()
+    @top = rect.top + window.pageYOffset
+    @left = rect.left + window.pageXOffset
+    @scale = 1.0
+    @posx = 0
+    @posy = 0
+
+    if target[0].clientWidth? and target[0].clientHeight?
+      @width = target[0].clientWidth unless target[0].clientWidth is 0
+      @height = target[0].clientHeight unless target[0].clientHeight is 0
 
     @svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
     @svg.setAttributeNS(null, 'version', '1.1')
@@ -32,7 +42,61 @@ class SVGDrawer
     @svg.setAttribute("height", @height + "px")
     @svg.setAttribute("viewBox", "0 0 " + @width + " " + @height)
     @svg.setAttribute("preserveAspectRatio", "xMinYMin")
+    @svgg = document.createElementNS("http://www.w3.org/2000/svg", "g")
+    @svg.appendChild @svgg
     target[0].appendChild(@svg)
+    onWheel = (e) =>
+      @scale -= e.originalEvent.deltaY * 0.01
+      # @scale = 1.5 if @scale > 1.5
+      @scale = 0.5 if @scale < 0.5
+      curposx = e.originalEvent.screenX - @left
+      curposy = e.originalEvent.screenY - @top
+      bbox = @svgg.getBBox()
+      pointx = bbox.width / 2
+      pointy = bbox.height / 2
+
+      tx = @posx * bbox.width / @width + (bbox.x + pointx)*(1 - @scale)
+      ty = @posy * bbox.height / @height + (bbox.y + pointy)*(1 - @scale)
+
+      @svgg.setAttribute("transform", "translate(#{tx}, #{ty}) scale(#{@scale})")
+    onDragStart = (e) =>
+      console.log "start"
+      e.preventDefault()
+      e.stopPropagation()
+      @isdrag = true
+      @startX = e.originalEvent.screenX
+      @startY = e.originalEvent.screenY
+    onDragEnd = (e) =>
+      console.log "end"
+      @isdrag = false
+      @startX = 0
+      @startY = 0
+    onDrag = (e) =>
+      return unless @isdrag
+
+      bbox = @svgg.getBBox()
+      pointx = bbox.width / 2
+      pointy = bbox.height / 2
+      curx = e.originalEvent.screenX
+      cury = e.originalEvent.screenY
+      if curx isnt 0 and cury isnt 0
+        @posx += curx - @startX
+        @posy += cury - @startY
+      @startX = curx
+      @startY = cury
+      tx = @posx * bbox.width / @width + (bbox.x + pointx)*(1 - @scale)
+      ty = @posy * bbox.height / @height + (bbox.y + pointy)*(1 - @scale)
+      # console.log e.originalEvent.screenX, e.originalEvent.screenY
+      console.log @posx,@posy
+      # console.log tx,ty
+      @svgg.setAttribute("transform", "translate(#{tx}, #{ty}) scale(#{@scale})")
+
+
+    target.on('wheel', onWheel)
+    target.on('mousedown', onDragStart)
+    target.on('mousemove', onDrag)
+    target.on('mouseup', onDragEnd)
+    target.on('')
 
   clear: () ->
     while @svg.firstChild?
@@ -56,7 +120,7 @@ class SVGDrawer
       path.setAttribute("d", "M" + a.toString() + " " + b.toString())
     else
       path.setAttribute("d", "M" + a)
-    @svg.appendChild(path)
+    @svgg.appendChild(path)
 
   drawRect: ({point, width, height, r, fill, opacity, stroke, stroke_dasharray}) ->
     rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
@@ -71,7 +135,7 @@ class SVGDrawer
     if r?
       rect.setAttribute("rx", r)
       rect.setAttribute("ry", r)
-    @svg.appendChild(rect)
+    @svgg.appendChild(rect)
 
   drawPath: (a, b, xd) ->
     unless b?
@@ -126,13 +190,13 @@ class SVGDrawer
       route = [start, "L", p1, "Q", b1, p2, "L", p3, "Q", b2, p4, "L", end].join(" ")
       @makePathObj(route)
 
-module.exports = class NEZDrawer extends SVGDrawer
+class NEZDrawer extends SVGDrawer
   show : (json) ->
     if json.tag is "Production"
       production = json
     else
+      console.log json.value[0].value[1]
       production = json.value[0]
-    console.log production
     return if production.value.length < 2
     target = production.value[production.value.length - 1]
     name = production.value[production.value.length - 2]
@@ -149,6 +213,7 @@ module.exports = class NEZDrawer extends SVGDrawer
       x: start_line.x + start_line.width
       y: start_line.y
     opt = @plot(target, option)
+    return if !opt? or !opt.width?
     end_line =
       shape: "path"
       width: 6
@@ -166,6 +231,8 @@ module.exports = class NEZDrawer extends SVGDrawer
     plot.height = Math.max(start_line.height, opt.height, end_line.height)
     console.log JSON.parse JSON.stringify(plot)
     @draw(plot)
+    @elementWidth = plot.width
+    @elementHeight = plot.height
     console.log plot
 
     @setViewport(plot)
@@ -174,6 +241,8 @@ module.exports = class NEZDrawer extends SVGDrawer
     switch json.tag
       when "Any", "Character", "String", "NonTerminal"
         @Textrect(json.tag, json.value, option)
+      when "Name"
+        @Textrect("NonTerminal", json.value, option)
       when "And", "Not"
         padding = 5
         p = @plot(json.value[0], option)
@@ -231,6 +300,7 @@ module.exports = class NEZDrawer extends SVGDrawer
         for v in json.value
           continue if v.tag is "Tagging"
           continue if v.tag is "Replace"
+          # console.log(v)
           p = @plot(v, opt)
           opt.x += p.width + sequence_width
           ret.width += p.width + sequence_width
@@ -369,7 +439,7 @@ module.exports = class NEZDrawer extends SVGDrawer
         ret.value.push p, loops, left, right
         ret.value.push path if json.tag is "Repetition"
         ret
-      when "New", "LeftNew", "Link"
+      when "New", "LeftNew", "Link", "Is", "If", "On", "Block", "Def"
         @plot(json.value[json.value.length - 1], option)
 
   plotRect: () ->
@@ -443,7 +513,7 @@ module.exports = class NEZDrawer extends SVGDrawer
       when "text"
         @drawText(plot.text, plot)
 
-  drawText : (text, option) ->
+  drawText : (text, option, target) ->
     t = document.createElementNS("http://www.w3.org/2000/svg", "text")
     t.setAttribute("x", option.x)
     t.setAttribute("y", option.y)
@@ -452,7 +522,8 @@ module.exports = class NEZDrawer extends SVGDrawer
     t.setAttribute("font-size", fontsize)
     t.setAttribute("font-family", "monospace")
     t.innerHTML = text
-    @svg.appendChild(t)
+    target = @svgg unless target?
+    target.appendChild(t)
     t
 
   drawTextPadding : (text, option) ->
@@ -463,14 +534,14 @@ module.exports = class NEZDrawer extends SVGDrawer
     t.setAttribute("font-size", 12)
     t.setAttribute("font-family", "monospace")
     t.innerHTML = text
-    @svg.appendChild(t)
+    @svgg.appendChild(t)
     t
 
   getCharSize : () ->
     if @charSize?
       @charSize
     else
-      text = @drawText("XgfTlM|.q", {x: -1000, y: -1000})
+      text = @drawText("XgfTlM|.q", {x: -1000, y: -1000}, @svg)
       box = text.getBBox()
       @charSize = {}
       @charSize.height = box.height
@@ -487,3 +558,7 @@ module.exports = class NEZDrawer extends SVGDrawer
     @drawRect(option)
 
   drawChoice : () ->
+
+
+if module?
+  module.exports = NEZDrawer
