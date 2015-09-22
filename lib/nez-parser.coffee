@@ -6,6 +6,7 @@ class Parser
   parse: (input) ->
     @currPos = 0
     @input = input
+    @NonTerminalList = []
     @nez$File()
 
   nez$File: () ->
@@ -953,6 +954,8 @@ class Parser
         posobj = poss.pop(posobj) if poss.length > 0
         if(result isnt false)
           result = @nez$_()
+        @NonTerminalList[@obj.value] = [] if !@NonTerminalList[@obj.value]?
+        @NonTerminalList[@obj.value].push pos: @obj.pos
     if(result isnt false)
       if(obj is null)
         obj = {}

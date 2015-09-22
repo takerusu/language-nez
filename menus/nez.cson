@@ -20,6 +20,10 @@
           {
             'label': 'Last Edit Position'
             'command': 'nez:last-edit-position'
+          },
+          {
+            'label': 'Refactor Rule Name'
+            'command': 'nez:refactor-rule-name'
           }
         ]
       }
