@@ -100,6 +100,9 @@
             "include": "#leftJoinCaptureBlockOld"
         },
         {
+            "include": "#exprLabel"
+        },
+        {
             "include": "#captureBlock"
         },
         {
@@ -112,7 +115,7 @@
             "include": "#rule"
         },
         {
-            "include": "#exprLabel"
+            "include": "#exprTag"
         },
         {
             "include": "#pegOperator"
@@ -164,13 +167,22 @@
             ]
         },
         "leftJoinCaptureBlock": {
-            "begin": "([a-zA-Z$_][a-zA-Z$_0-9]*)\\s*(\\{@)",
+            "begin": "([a-zA-Z$_][a-zA-Z$_0-9]*)\\s*(\\{)(([@]|[$])([a-zA-Z_][a-zA-Z$_0-9]*)?)?",
             "beginCaptures": {
                 "1": {
                     "name": "variable.parameter.nez"
                 },
                 "2": {
                     "name": "keyword.operator.nez"
+                },
+                "3": {
+                    "name": "entity.name.function"
+                },
+                "4": {
+                    "name": "keyword.operator.nez"
+                },
+                "5": {
+                    "name": "variable.parameter.nez"
                 }
             },
             "end": "\\}",
@@ -242,6 +254,23 @@
                 }
             }
         },
+        "exprLabel": {
+            "begin": "([$])([a-zA-Z_][a-zA-Z$_0-9]*)*\\s*(\\()",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.operator.nez"
+                },
+                "2": {
+                    "name": "variable.parameter.nez"
+                }
+            },
+            "end": "(\\))",
+            "patterns": [
+                {
+                    "include": "source.nez"
+                }
+            ]
+        },
         "capturedRule": {
             "match": "(@)(\\[[0-9]+\\])?([a-zA-Z$_][a-zA-Z$_0-9]*)",
             "captures": {
@@ -288,12 +317,13 @@
                 }
             },
             "end": "\\*/",
-            "name": "comment.block.documentation.peg"
+            "name": "comment.block.documentation.nez"
         },
-        "exprLabel": {
+        "exprTag": {
             "match": "#[a-zA-Z$_][a-zA-Z$_0-9]*(\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*",
             "name": "entity.name.function"
-        },"literalTripleDouble": {
+        },
+        "literalTripleDouble": {
             "begin": "\"\"\"",
             "beginCaptures": {
                 "0": {
