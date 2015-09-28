@@ -37,6 +37,8 @@ class NezManager
         @goToDeclaration()
       "nez:last-edit-position": =>
         @setCursorLastPos()
+      "nez:refactor-rule-name": =>
+        @createNezRefactorView(state).toggle(@)
       # "nez:beta": =>
       #   @beta()
     atom.config.observe 'language-nez.nezPath', (newValue) ->
@@ -79,6 +81,15 @@ class NezManager
       @nezView = new NezView()
     @nezView
 
+  createNezRefactorView:(state) ->
+    editor = atom.workspace.getActiveTextEditor()
+    rule = editor.getWordUnderCursor()
+    unless @nezRefactorView?
+      NezRefactorView = require './nez-refactor-view'
+      @nezRefactorView = new NezRefactorView()
+    @nezRefactorView.setRule(rule)
+    @nezRefactorView
+
   getRule: ->
     # 現在開いているeditorの本体
     editor = atom.workspace.getActiveTextEditor()
@@ -87,10 +98,8 @@ class NezManager
     rs = {}
     @ruleArray = []
     results = parser.parse editor.getText()
-    nl = [0]
-    editor.scan(/\n/g, (obj) ->
-      nl.push obj.match.index
-    )
+    @NonTerminalList = parser.NonTerminalList
+
     rules = []
     if !results.value?
       return
@@ -104,6 +113,16 @@ class NezManager
         rule.pos = result.value[0].pos
         rules.push rule
     #console.log rules
+    @addRangeToRules(rules, rs)
+    @ruleArray = rules
+    @ruleSet = rs
+
+  addRangeToRules: (rules, rs) ->
+    editor = atom.workspace.getActiveTextEditor()
+    nl = [0]
+    editor.scan(/\n/g, (obj) ->
+      nl.push obj.match.index
+    )
     if nl.length > 1
       i = 0
       n = 0
@@ -111,12 +130,14 @@ class NezManager
         if nl[i] <= rules[n].pos.start < nl[i+1]
           s = rules[n].pos.start
           e = rules[n].pos.end
-          rules[n].range = new Range([i, s-nl[i]-1], [i+1, s-nl[i]-1])
-          rs[rules[n].name] = rules[n].range
+          if rs?
+            rules[n].range = new Range([i, s-nl[i]-1], [i+1, s-nl[i]-1])
+            rs[rules[n].name] = rules[n].range
+          else
+            rules[n].range = new Range([i, s-nl[i]-1], [i, e-nl[i]-1])
+          i--
           n++
         i++
-    @ruleArray = rules
-    @ruleSet = rs
 
   createFile:(callback) ->
     tmp = require 'tmp'
@@ -144,6 +165,19 @@ class NezManager
   setCursorLastPos: ->
     console.log lastPos = @lastPoss.pop()
     atom.workspace.getActiveTextEditor().setCursorBufferPosition lastPos if lastPos
+
+  refactorRuleName: (after, rule) ->
+    editor = atom.workspace.getActiveTextEditor()
+    console.log rule = editor.getWordUnderCursor() if !rule?
+    @getRule()
+    if @NonTerminalList[rule]?
+      @addRangeToRules(@NonTerminalList[rule])
+      console.log @NonTerminalList[rule]
+      i = @NonTerminalList[rule].length - 1
+      while i >= 0
+        if @NonTerminalList[rule][i].range?
+          editor.setTextInBufferRange(@NonTerminalList[rule][i].range, after)
+        i--
 
   beta: ->
     editor = atom.workspace.getActiveTextEditor()
