@@ -32,7 +32,7 @@ module.exports =
     confirm: =>
       after = @editor.getText()
       @nez?.refactorRuleName(after, @rule)
-      @toggle()
+      @hide()
 
     toggle: (nez) ->
       @nez = nez if nez?

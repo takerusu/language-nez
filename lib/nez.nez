@@ -79,7 +79,7 @@ KEYWORD
    / "true"
    / "false"
    / "define"
-   / "type"
+  // / "type"
 
 NAME
    = !KEYWORD LETTER W*
@@ -191,6 +191,7 @@ Primary
    / { '.' #Any } _
    / { '0x' HEX HEX #Byte } _
    / { 'U+' HEX HEX HEX HEX #Byte } _
+   / { '$' (@Label)? "(" @Expression ")" #label}
    / "(" Expression ")"
    / Constructor
    / Replace
@@ -227,8 +228,11 @@ CHAR
 HEX
    = [0-9A-Fa-f]
 
+Label
+  = { NAME ('.' NAME)? #Label } _
+
 Constructor
-   = { ('{@' S #LeftNew / '{' #New ) _ (@Expression)? '}' } _
+   = { ('{@' S #LeftNew / '{$' (@Label)? #LabelNew / '{' #New ) _ (@Expression)? '}' } _
 
 Tagging
 	= '#' { LETTER W* #Tagging } _
