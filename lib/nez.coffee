@@ -54,12 +54,13 @@ class NezManager
   run:(input) ->
     # 現在開いているeditorの本体
     editor = atom.workspace.getActiveTextEditor()
-    tmpobj = @createFileSync()
+    tmpobj = @createFileSync(postfix: '.nez')
     path = tmpobj.name
     fs.writeFileSync(path, editor.getText())
     #einput = input.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"")
     #java -jar nez.jar -p input.nez
-    command = "java -jar #{@nezPath} ast -p #{path}"
+    parse_command = "parse"
+    command = "java -jar #{@nezPath} #{parse_command} -p #{path}"
     command = "#{command} -s #{@startPoint}" unless @startPoint is ""
     inputobj = @createFileSync()
     inputPath = inputobj.name
@@ -143,9 +144,9 @@ class NezManager
     tmp = require 'tmp'
     tmp.file callback
 
-  createFileSync: ->
+  createFileSync:(option) ->
     tmp = require 'tmp'
-    tmpobj = tmp.fileSync()
+    tmpobj = tmp.fileSync(option)
     #console.log("Dir: ", tmpobj.name)
     return tmpobj
 
