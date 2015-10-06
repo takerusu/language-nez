@@ -273,7 +273,7 @@ OldExample
    = { '[' ('bad-')? 'example:' (!']' .)* ']' #OldExample} _
 
 ExampleStatement
-   = { "example" ( '!' #Rebut / #Example ) @NonTerminal ('&' @NonTerminal)* addInputText } _
+   = { "example" ( '!' #Rebut / #Example ) @NonTerminal ('&' @NonTerminal)* (@{'~' W+ #Hash} _ )? addInputText } _
 
 addInputText
    = '\'\'\'' EOL @({ (!('\n' '\'\'\'') .)* }) '\n' '\'\'\''
