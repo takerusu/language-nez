@@ -2,13 +2,13 @@
 class Parser
    constructor: ->
       @currPos = 0
-      
+
    parse: (input) ->
       @currPos = 0
       @input = input
       @NonTerminalList = []
       @nez$File()
-      
+
    nez$File: () ->
       obj = null
       outs = []
@@ -90,7 +90,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$S: () ->
       obj = null
       outs = []
@@ -162,7 +162,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Statement: () ->
       obj = null
       outs = []
@@ -230,7 +230,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Document: () ->
       obj = null
       outs = []
@@ -319,7 +319,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$COMMENT: () ->
       obj = null
       outs = []
@@ -449,7 +449,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$EOL: () ->
       obj = null
       outs = []
@@ -520,7 +520,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$EOT: () ->
       obj = null
       outs = []
@@ -565,7 +565,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$_: () ->
       obj = null
       outs = []
@@ -742,7 +742,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$ExampleStatement: () ->
       obj = null
       outs = []
@@ -955,10 +955,8 @@ class Parser
                obj = true
             result = obj
          result = obj
-         @NonTerminalList[@obj.value] = [] if !@NonTerminalList[@obj.value]?
-         @NonTerminalList[@obj.value].push pos: @obj.pos
       result
-   
+
    nez$NonTerminal: () ->
       obj = null
       outs = []
@@ -1039,8 +1037,10 @@ class Parser
                obj = true
             result = obj
          result = obj
+         @NonTerminalList[@obj.value] = [] if !@NonTerminalList[@obj.value]?
+         @NonTerminalList[@obj.value].push pos: @obj.pos
       result
-   
+
    nez$NAME: () ->
       obj = null
       outs = []
@@ -1092,7 +1092,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$KEYWORD: () ->
       obj = null
       outs = []
@@ -1672,7 +1672,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$W: () ->
       obj = null
       outs = []
@@ -1744,7 +1744,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$LETTER: () ->
       obj = null
       outs = []
@@ -1806,7 +1806,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$addInputText: () ->
       obj = null
       outs = []
@@ -2258,7 +2258,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$ImportStatement: () ->
       obj = null
       outs = []
@@ -2417,7 +2417,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$ImportName: () ->
       obj = null
       outs = []
@@ -2525,7 +2525,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Character: () ->
       obj = null
       outs = []
@@ -2662,7 +2662,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$String: () ->
       obj = null
       outs = []
@@ -2799,7 +2799,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$FormatStatement: () ->
       obj = null
       outs = []
@@ -2953,7 +2953,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Identifier: () ->
       obj = null
       outs = []
@@ -3020,7 +3020,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$FormatSize: () ->
       obj = null
       outs = []
@@ -3098,7 +3098,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$INT: () ->
       obj = null
       outs = []
@@ -3150,7 +3150,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Formatter: () ->
       obj = null
       outs = []
@@ -3605,7 +3605,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Index: () ->
       obj = null
       outs = []
@@ -3683,7 +3683,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$TemplateStatement: () ->
       obj = null
       outs = []
@@ -3839,7 +3839,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$TemplateParameter: () ->
       obj = null
       outs = []
@@ -3922,7 +3922,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Expression: () ->
       obj = null
       outs = []
@@ -4034,7 +4034,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Sequence: () ->
       obj = null
       outs = []
@@ -4130,7 +4130,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Prefix: () ->
       obj = null
       outs = []
@@ -4277,7 +4277,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Integer: () ->
       obj = null
       outs = []
@@ -4342,7 +4342,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Suffix: () ->
       obj = null
       outs = []
@@ -4468,7 +4468,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Primary: () ->
       obj = null
       outs = []
@@ -5102,7 +5102,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Charset: () ->
       obj = null
       outs = []
@@ -5306,7 +5306,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$CHAR: () ->
       obj = null
       outs = []
@@ -5532,7 +5532,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$HEX: () ->
       obj = null
       outs = []
@@ -5594,7 +5594,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Label: () ->
       obj = null
       outs = []
@@ -5676,7 +5676,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Constructor: () ->
       obj = null
       outs = []
@@ -5803,7 +5803,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Replace: () ->
       obj = null
       outs = []
@@ -5940,7 +5940,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Tagging: () ->
       obj = null
       outs = []
@@ -6022,7 +6022,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Extension: () ->
       obj = null
       outs = []
@@ -6111,7 +6111,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$addExtension: () ->
       obj = null
       outs = []
@@ -6517,7 +6517,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$FlagName: () ->
       obj = null
       outs = []
@@ -6606,7 +6606,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$TableName: () ->
       obj = null
       outs = []
@@ -6682,7 +6682,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Production: () ->
       obj = null
       outs = []
@@ -6791,7 +6791,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Modifiers: () ->
       obj = null
       outs = []
@@ -6863,7 +6863,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$Modifier: () ->
       obj = null
       outs = []
@@ -6995,7 +6995,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$_SKIP_: () ->
       obj = null
       outs = []
@@ -7037,7 +7037,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$_ANNOTATION_: () ->
       obj = null
       outs = []
@@ -7086,7 +7086,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$_DOC_: () ->
       obj = null
       outs = []
@@ -7155,7 +7155,7 @@ class Parser
             result = obj
          result = obj
       result
-   
+
    nez$OldExample: () ->
       obj = null
       outs = []
@@ -7324,5 +7324,5 @@ class Parser
             result = obj
          result = obj
       result
-   
+
 module.exports = new Parser()
