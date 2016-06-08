@@ -1,0 +1,4 @@
+'.source.nez':
+  'example':
+    'prefix': 'example'
+    'body': 'example ${1:Rule} \'\'\'\n${2:body}\n\'\'\''
